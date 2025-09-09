@@ -1,9 +1,12 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
-import { defineConfig } from '#q-app/wrappers'
+import {
+  defineConfig
+} from '#q-app/wrappers'
+import path from 'path'
 
-export default defineConfig((/* ctx */) => {
+export default defineConfig(( /* ctx */ ) => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -36,6 +39,13 @@ export default defineConfig((/* ctx */) => {
         browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
         node: 'node20',
       },
+      vite: {
+        resolve: {
+          alias: {
+            '@': path.resolve(__dirname, './src'),
+          },
+        },
+      },
 
       vueRouterMode: 'hash', // available values: 'hash', 'history'
       // vueRouterBase,
@@ -65,7 +75,9 @@ export default defineConfig((/* ctx */) => {
               useFlatConfig: true,
             },
           },
-          { server: false },
+          {
+            server: false
+          },
         ],
       ],
     },
