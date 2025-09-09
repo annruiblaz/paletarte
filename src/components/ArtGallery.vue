@@ -1,5 +1,5 @@
 <template>
-  <div class="art-gallery row q-col-gutter-md">
+  <div class="art-gallery">
     <div v-if="loading" class="loading q-pa-md full-width">
       <q-spinner-ios size="50px" color="primary" class="q-pt-lg" />
       <h5 color="primary">Cargando obras de arte...</h5>
@@ -60,8 +60,16 @@ onMounted(() => {
 }
 
 .masonry {
-  columns: 3;
+  columns: auto;
   gap: 16px;
+
+  @media (min-width: 600px) {
+    columns: 2;
+  }
+
+  @media (min-width: 1200px) {
+    columns: 3;
+  }
 }
 
 .masonry > .q-card {
