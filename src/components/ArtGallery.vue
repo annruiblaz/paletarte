@@ -1,11 +1,11 @@
 <template>
   <div class="art-gallery">
-    <div v-if="loading" class="loading q-pa-md full-width">
+    <div v-if="isLoading" class="loading q-pa-md full-width">
       <q-spinner-ios size="50px" color="primary" class="q-pt-lg" />
-      <h5 color="primary">Cargando obras de arte...</h5>
+      <h5>Cargando obras de arte...</h5>
     </div>
 
-    <div class="masonry">
+    <div v-else class="masonry">
       <q-card v-for="art in artworks" :key="art.id" class="q-mb-lg">
         <img :src="art.edmPreview[0]" :alt="art.title[0]" />
         <q-card-section>
@@ -18,25 +18,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { searchArtworks } from '../services/europeanaApi.js'
+import { onMounted } from 'vue'
+import { useArtworkStore } from 'src/stores/artworkStore.js'
+import { storeToRefs } from 'pinia'
 
-const artworks = ref([])
-const loading = ref(true)
+//se inicializa la store
+const artworkStore = useArtworkStore()
+
+//se desestructura la store con storeToRefs para conservar la reactividad
+const { artworks, isLoading, error } = storeToRefs(artworkStore)
 
 onMounted(async () => {
-  loading.value = true
-
-  if (!localStorage.getItem('artworks')) {
-    artworks.value = await searchArtworks({}).then(() => {
-      console.log('Artgallery data fetch', artworks.value)
-    })
-  } else {
-    artworks.value = JSON.parse(localStorage.getItem('artworks') || '[]')
-    console.log('Artgallery data LocalStorage', artworks.value)
+  try {
+    if (artworks.value.length == 0) {
+      artworkStore.fetchArtworks({ query: '*', theme: 'art' })
+    }
+  } catch (e) {
+    console.error('Error al cargar las obras de arte iniciales:', e)
+    error.value = e.message
   }
-
-  loading.value = false
 })
 </script>
 
@@ -56,6 +56,10 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   text-align: center;
+
+  h5 {
+    color: #4a4e69;
+  }
 }
 
 .masonry {
