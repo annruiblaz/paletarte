@@ -6,7 +6,7 @@
     </div>
 
     <div class="masonry">
-      <q-card v-for="art in artworks" :key="art.id" class="q-my-lg">
+      <q-card v-for="art in artworks" :key="art.id" class="q-mb-lg">
         <img :src="art.edmPreview[0]" :alt="art.title[0]" />
         <q-card-section>
           <div class="text-h6">{{ art.title[0] }}</div>
@@ -20,24 +20,23 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { searchArtworks } from '../services/europeanaApi.js'
+
 const artworks = ref([])
 const loading = ref(true)
 
-const fetchArtworks = async () => {
-  try {
-    const data = await searchArtworks()
-    console.log('Data:', data)
-    artworks.value = data
-  } catch (error) {
-    console.error('Error fetching artworks:', error)
-  } finally {
-    loading.value = false
-  }
-}
+onMounted(async () => {
+  loading.value = true
 
-onMounted(() => {
-  fetchArtworks()
-  return artworks
+  if (!localStorage.getItem('artworks')) {
+    artworks.value = await searchArtworks({}).then(() => {
+      console.log('Artgallery data fetch', artworks.value)
+    })
+  } else {
+    artworks.value = JSON.parse(localStorage.getItem('artworks') || '[]')
+    console.log('Artgallery data LocalStorage', artworks.value)
+  }
+
+  loading.value = false
 })
 </script>
 
@@ -74,5 +73,9 @@ onMounted(() => {
 
 .masonry > .q-card {
   break-inside: avoid;
+}
+
+.q-card > img {
+  width: 100%;
 }
 </style>

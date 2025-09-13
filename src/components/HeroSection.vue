@@ -27,7 +27,7 @@ import heroImage from 'src/assets/hero1.jpg'
 <style lang="sass" scoped>
 h2,
 h3
-  color: $light;
+  color: $light
 
 .hero-background::before
     content: ''

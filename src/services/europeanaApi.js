@@ -1,20 +1,25 @@
 const API_URL = 'https://api.europeana.eu/record/v2/search.json'
-const API_KEY = process.env.VUE_APP_EUROPEANA_API_KEY
+
+export const searchArtworks = async ({
+  query = '*',
+  rows = 25,
+  theme = ''
+}) => {
 
 
-export const searchArtworks = async (query = 'painting', start = 1, rows = 50) => {
-
-
-  if (!API_KEY) {
+  if (!process.env.VUE_APP_EUROPEANA_API_KEY) {
     console.error('La API key no está definida.')
     throw new Error('API key is not defined')
   }
 
+  const randomInt = Math.floor(Math.random() * 800)
+
   const url = new URL(API_URL)
-  url.searchParams.append('wskey', API_KEY)
+  url.searchParams.append('wskey', process.env.VUE_APP_EUROPEANA_API_KEY)
   url.searchParams.append('query', query)
-  url.searchParams.append('start', start)
+  url.searchParams.append('start', randomInt)
   url.searchParams.append('rows', rows)
+  url.searchParams.append('theme', theme)
   url.searchParams.append('media', 'true')
   url.searchParams.append('qf', 'TYPE:IMAGE')
   url.searchParams.append('reusability', 'open')
